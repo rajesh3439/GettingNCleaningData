@@ -12,13 +12,13 @@ if(!require(dplyr)){
 }
 
 # load training and testing data
-features <- data.table::fread('features.txt', col.names = c('Id','variable'))
-x_train <- data.table::fread('train/X_train.txt', sep = ' ', col.names = features[,variable]) 
-y_train <- data.table::fread('train/y_train.txt', sep = ' ')
-subject_train <- data.table::fread('train/subject_train.txt')
-x_test <- data.table::fread('test/X_test.txt', sep = ' ', col.names = features[,variable]) 
-y_test <- data.table::fread('test/y_test.txt', sep = ' ')
-subject_test <- data.table::fread('test/subject_test.txt')
+features <- data.table::fread('UCI HAR Dataset/features.txt', col.names = c('Id','variable'))
+x_train <- data.table::fread('UCI HAR Dataset/train/X_train.txt', sep = ' ', col.names = features[,variable]) 
+y_train <- data.table::fread('UCI HAR Dataset/train/y_train.txt', sep = ' ')
+subject_train <- data.table::fread('UCI HAR Dataset/train/subject_train.txt')
+x_test <- data.table::fread('UCI HAR Dataset/test/X_test.txt', sep = ' ', col.names = features[,variable]) 
+y_test <- data.table::fread('UCI HAR Dataset/test/y_test.txt', sep = ' ')
+subject_test <- data.table::fread('UCI HAR Dataset/test/subject_test.txt')
 
 # STEP1: Merge Training and Testing datasets
 # Substep: combine x, y & subject 
@@ -35,7 +35,7 @@ req_cols = grep('(mean|std|activity|subject)', names(merged.measurements))
 extracted_measurements <- merged.measurements[, ..req_cols]
 
 # STEP3 : Descriptive activity names
-activity_labels <- data.table::fread('activity_labels.txt')
+activity_labels <- data.table::fread('UCI HAR Dataset/activity_labels.txt')
 step3 <- extracted_measurements[, activity:= activity_labels[,V2][activity]]
 
 # Bring activity & subject columns to front for better readability
@@ -57,5 +57,4 @@ step5 <- step3 %>% group_by(subject, activity) %>%
         rename_with(~gsub('_','.',.x))
 step5 <- as.data.frame(step5)
 # write date to file
-#fwrite(step5, file='tidydata.txt')
 write.table(step5, file='tidydata.txt', col.names = TRUE, row.names = FALSE)
